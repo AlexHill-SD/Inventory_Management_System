@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            html
+            {
+                background-color: #232931;
+                color: white;
+                font-family: 'Roboto Mono', monospace;
+            }
+
+            h1
+            {
+                text-align: center;
+                font-size: 50px;
+                margin-top: 5%;
+            }
+
+            h2
+            {
+                text-align: center;
+            }
+
+            .red
+            {
+                color: #A11E1E;
+            }
+
+            .green
+            {
+                color: green;
+            }
+        </style>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Home nVentory</h1>
+        <h2 class='red'>Account Activation Required</h2>
+        <p>
+            Hello {{username}},
+            Thank you for registering for an account with Home nVentory, we're excited for you to try out our services.
+            <br>
+            Follow the link below to activate your account.
+            <br>
+            <a href="{{activationLink}}">Activate your Home nVentory account</a>
+        </p>
+        
+        <p>
+            If you didn't register for an account with Home nVentory then please disregard this e-mail.
+        </p>
+    </body>
+</html>

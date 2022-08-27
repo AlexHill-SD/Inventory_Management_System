@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+html
+{
+    background-color: #232931;
+    color: white;
+    font-family: 'Roboto Mono', monospace;
+}
+
+h1
+{
+    text-align: center;
+    font-size: 50px;
+    margin-top: 5%;
+}
+
+h2
+{
+    text-align: center;
+}
+
+input
+{
+      background-color: #232931;
+                 color: #A0A0A0;
+         border-radius: 3px;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+                border: #606060 1px solid;
+           font-family: 'Roboto Mono', monospace;
+}
+
+table
+{
+    width: 400px;
+    height: 25%;
+    margin: 5% auto;
+    border-collapse: collapse;
+}
+
+#informationTable
+{
+    width: 500px;
+}
+
+#informationTable td
+{
+    height: 25px;
+}
+
+#informationTable th
+{
+    font-size: 30px;
+    text-aling: center;
+}
+
+td
+{
+    text-align: center;
+    height: 50px;
+}
+
+.giantSpacerRow
+{
+    height: 50px;
+}
+
+.bigSpacerRow
+{
+    height: 10px;
+}
+
+.smallSpacerRow
+{
+    height: 5px;
+}
+
+input[type=text], input[type=password], input[type=email]
+{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.leftAlign
+{
+    text-align: left;
+    padding-left: 10px;
+}
+
+.rightAlign
+{
+    text-align: right;
+}
+
+.leftCell
+{
+    width: auto;
+}
+
+.rightCell
+{
+    width: 300px;
+}
+
+::placeholder
+{
+    color: #A0A0A0;
+    opacity: 1;
+    font-family: 'Roboto Mono', monospace;
+}
+
+#deactivateSubmit
+{
+    background-color: red;
+    color: black;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+#passwordChangeSubmit
+{
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+#accountChangeSubmit
+{
+    background-color: green;
+    color: black;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* * * * * * * * * * * NAV BAR CSS * * * * * * * * * */
+#navBar 
+{
+    list-style-type: none;
+    height: 50px;
+    width: 98%;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+    background-color: #353e4b;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+}
+
+#navBar li 
+{
+    float: left;
+}
+
+#navBar li a 
+{
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: medium;
+}
+
+#navBar li a:hover 
+{
+    background-color: #2a323c;
+    color: white;
+}
+
+#navBar li a.active 
+{
+    color: white;
+}
+
+#navBar li a.logout
+{
+    background-color: #A11E1E;
+}
+
+#navBar #menuRight
+{
+    float: right;
+}
+
+#navBar li a.account
+{
+    background-color: teal;
+    color: black;
+}

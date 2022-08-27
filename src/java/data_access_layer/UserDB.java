@@ -1,0 +1,269 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package data_access_layer;
+
+import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
+import models.Role;
+import models.User;
+
+/**
+ *
+ * @author BritishWaldo
+ */
+public class UserDB
+{
+    public List<User> getAll() throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        
+        try
+        {
+           List<User> allUserList = entityManager.createNamedQuery("User.findAll", User.class).getResultList();
+           return allUserList;
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+    
+    public List<User> getAllSorted(String columnName) throws Exception
+    {        
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        List<User> allUserListSorted = null;
+        
+        try
+        {
+            entityTransaction.begin();
+            
+            Query customQuery = entityManager.createQuery("SELECT u FROM User u ORDER BY u." + columnName);
+            
+            allUserListSorted =  customQuery.getResultList();
+            
+            return allUserListSorted;
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+
+    public User get(String inputUsername) throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        
+        try
+        {
+            User tempUser = entityManager.find(User.class, inputUsername);
+            return tempUser;
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+    
+    public User getByEmail(String inputEmail) throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        User user = null;
+        try
+        {
+            user = entityManager.createNamedQuery("User.findByEmail", User.class)
+                                            .setParameter("email", inputEmail)
+                                            .getSingleResult();
+        } 
+        catch (Exception ex)
+        {
+            //ex.printStackTrace();
+        }
+        finally {
+            entityManager.close();
+        }
+        
+        return user;
+    }
+
+    public void insert(User inputUser) throws Exception
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        try
+        {
+            //System.out.println(inputUser);
+            Role userRole = inputUser.getRole();
+            
+            //make sure the role object now contains the new user
+            userRole.getUserList().add(inputUser);
+            
+            entityTransaction.begin();
+            
+            entityManager.persist(inputUser);
+            
+            //merge the role (aka update the role so that it contains the new user)
+            entityManager.merge(userRole);
+            
+            entityTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            entityTransaction.rollback();
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+
+    public void update(String originalUsername, User inputUser) throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        try
+        {
+            entityTransaction.begin();
+            
+            User originalUserFromDB = entityManager.merge(this.get(originalUsername));
+            
+            Role originalUserRole = originalUserFromDB.getRole();
+            Role inputUserRole = inputUser.getRole();
+            
+            //make sure old role no longer contains the user
+            originalUserRole.getUserList().remove(originalUserFromDB);
+            
+            if (!originalUserRole.equals(inputUserRole))
+            {
+                //add user to new role
+                inputUserRole.getUserList().add(inputUser);
+            }
+            
+            entityManager.remove(originalUserFromDB);
+            
+            if (originalUserFromDB.getUsername().equals(inputUser.getUsername()))
+            {
+                //must remove 'old' user and commit before you can persist 'new' user.
+                //Only needed if usernames aren't changing
+                //really shouldn't be needed as primary key should be an autogenerated ID column to avoid this sort of issue.
+                entityTransaction.commit();
+                entityTransaction.begin();
+            }
+
+            entityManager.persist(inputUser);
+            
+            //merge the role (aka update the role so that it contains the new user)
+            entityManager.merge(originalUserRole);
+            
+            entityManager.merge(inputUserRole);
+            
+            entityTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex);
+            entityTransaction.rollback();
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+    
+    public void updateActiveStatus(User inputUser) throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        try
+        {
+            entityTransaction.begin();
+            
+            User confirmedUser = entityManager.merge(this.get(inputUser.getUsername()));
+            
+            confirmedUser.setActive(inputUser.getActive());
+            
+            entityManager.merge(confirmedUser);
+            
+            entityTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex);
+            entityTransaction.rollback();
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+    
+    public void updatePassword(User inputUser) throws Exception 
+    {
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        try
+        {
+            entityTransaction.begin();
+            
+            User originalUserFromDB = this.get(inputUser.getUsername());
+            
+            originalUserFromDB.setPassword(inputUser.getPassword());
+            
+            entityManager.merge(originalUserFromDB);
+            
+            entityTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            entityTransaction.rollback();
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    }
+
+    public void delete(User inputUser) throws Exception 
+    {        
+        EntityManager entityManager = DBUtil.getEntityFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        
+        try
+        {
+            entityTransaction.begin();
+            
+            User confirmedUser = entityManager.merge(this.get(inputUser.getUsername()));
+            
+            Role userRole = confirmedUser.getRole();
+            
+            //make sure the role object no longer contains the new user
+            userRole.getUserList().remove(confirmedUser);
+            
+            entityManager.remove(confirmedUser);
+            
+            //merge the role (aka update the role so that it doesn't contain the new user)
+            entityManager.merge(userRole);
+            
+            entityTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            entityTransaction.rollback();
+        }
+        finally
+        {
+            entityManager.close();
+        }
+    } 
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/Home_nVentory">
+    <Resource
+            name="jdbc/aws_homeinventorydb"
+            url="jdbc:mysql://homenventory.c4gnq4fkfjdz.us-west-2.rds.amazonaws.com:3306/homeinventorydb"
+            username="root"
+            password="Password"
+            maxActive="100"
+            maxIdle="30"
+            maxWait="10000" 
+            logAbandoned="true"
+            removeAbandoned="true" 
+            removeAbandonedTimeout="60"
+            driverClassName="com.mysql.jdbc.Driver"
+            type="javax.sql.DataSource"
+            auth="Container"
+    />
+</Context>
+<!--url="jdbc:mysql://localhost:3306/homeinventorydb" -->
